@@ -2,8 +2,8 @@ const Sequelize = require("sequelize");
 const config = require("./env-variables")
 global.databaseConnection = new Sequelize(config.databaseName, config.dbuser, config.password, config.dbconnection);
 
-(async function validateConnection(){
-try {
+(async function validateConnection() {
+  try {
     await global.databaseConnection.authenticate();
     console.log('Connection has been established successfully.');
   } catch (error) {
@@ -14,7 +14,7 @@ try {
 let models = require('./model-collection');
 global.databaseConnection.Models = models;
 (async () => {
-    await global.databaseConnection.sync();
-    // Code here
-  })();
-  
+  await global.databaseConnection.sync();
+  // Code here
+})();
+

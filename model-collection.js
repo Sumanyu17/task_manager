@@ -6,6 +6,6 @@ const models = {
   User: User,
   Task: Task,
   SubTasks: SubTasks
-};Task
+}; Task
 
 module.exports = models;
