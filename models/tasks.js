@@ -1,23 +1,23 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
 
 
-let deleteSubTasks = function(task, options) {
+let deleteSubTasks = function (task, options) {
   try {
     let time = new Date();
-  global.databaseConnection.models.subTasks.update({deletedAt: time}, {where:{taskId: task.id}}).then((result)=>{
-    if(result){
-      console.log("associated subTasks Deleted");
-    }
-    else{
-      console.log("failed to delete assocaiated subTasks");
-    }
+    global.databaseConnection.models.subTasks.update({ deletedAt: time }, { where: { taskId: task.id } }).then((result) => {
+      if (result) {
+        console.log("associated subTasks Deleted");
+      }
+      else {
+        console.log("failed to delete assocaiated subTasks");
+      }
+      return;
+    });
     return;
-  });
-  return;
   } catch (error) {
     console.log(error);
   }
-  
+
 }
 const Tasks = global.databaseConnection.define("tasks", {
   id: {
@@ -32,7 +32,7 @@ const Tasks = global.databaseConnection.define("tasks", {
   description: {
     type: DataTypes.STRING(255),
   },
-  priority:{
+  priority: {
     type: DataTypes.INTEGER,
     required: true
   },
@@ -50,8 +50,8 @@ const Tasks = global.databaseConnection.define("tasks", {
     hooks: {
       afterUpdate: deleteSubTasks,
       afterDestroy: deleteSubTasks,
+    }
   }
-}
 );
 Tasks.belongsTo(global.databaseConnection.models.users, {
   foreignKey: 'userId'
