@@ -314,7 +314,7 @@ function updateTask(id, status, dueDate) {
 
 function deleteTask(id) {
   return new Promise(function (resolve, reject) {
-    global.databaseConnection.models.tasks.destroy({ where: { id: id } })
+    global.databaseConnection.models.tasks.destroy({ where: { id: id } , individualHooks:true})
       .then(function (result) {
         if (result) {
           let task = result[0];

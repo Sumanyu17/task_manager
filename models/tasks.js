@@ -48,7 +48,6 @@ const Tasks = global.databaseConnection.define("tasks", {
   {
     paranoid: true,
     hooks: {
-      afterUpdate: deleteSubTasks,
       afterDestroy: deleteSubTasks,
     }
   }
