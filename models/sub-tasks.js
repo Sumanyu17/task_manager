@@ -26,12 +26,9 @@ const SubTasks = global.databaseConnection.define("subTasks", {
     hooks: { afterUpdate: checkTaskStatus }
   }
 );
-// console.log(global.databaseConnection);
 
 SubTasks.belongsTo(global.databaseConnection.models.tasks, {
   foreignKey: 'taskId', onDelete: 'cascade', hooks: true
 });
-// global.databaseConnection.models.tasks.hasMany(SubTasks, {
-//   foreignKey: 'taskId', onDelete: 'cascade', hooks:true })
 
 module.exports = SubTasks;

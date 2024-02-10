@@ -25,6 +25,53 @@ function authenticateToken(req, res, next) {
 }
 
 /*Routes Start*/
+app.get('/task', authenticateToken, async (req, res) => {
+  try {
+    const tasks = await getAllTasks(req.user);
+    if (tasks?.length) {
+      console.log("tasks fetched"); // Log the created task
+      res.status(200).json({ tasks });
+    } else {
+      console.log("No tasks Found for current user"); // Log if task creation failed
+      res.status(400).json({ error: "No tasks Found for current user" });
+    }
+  } catch (error) {
+    console.error("Error creating task:", error); // Log any errors
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/sub-task', authenticateToken, async (req, res) => {
+  try {
+    let subTasks = await getAllSubTasks(req.user);
+    if (subTasks?.length) {
+      console.log("subTasks fetched"); // Log the created task
+      res.status(200).json({ subTasks });
+    } else {
+      console.log("No subTasks Found for current task"); // Log if task creation failed
+      res.status(400).json({ error: "No subTasks Found for current task" });
+    }
+  } catch (error) {
+    console.error("Error creating task:", error); // Log any errors
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/sub-task/:id', authenticateToken, async (req, res) => {
+  try {
+    let subTasks = await getAllSubTasksForTask(req.params?.id);
+    if (subTasks?.length) {
+      console.log("subTasks fetched"); // Log the created task
+      res.status(200).json({ subTasks });
+    } else {
+      console.log("No subTasks Found for current task"); // Log if task creation failed
+      res.status(400).json({ error: "No subTasks Found for current task" });
+    }
+  } catch (error) {
+    console.error("Error creating task:", error); // Log any errors
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.post('/register', async (req, res) => {
   try {
@@ -265,6 +312,76 @@ function createTask(currentUser, title, description, status, priority, dueDate) 
   })
 }
 
+function getAllTasks(currentUser) {
+  return new Promise(function (resolve, reject) {
+    global.databaseConnection.models.tasks.findAll({
+      where: { userId: currentUser }
+    }).then(function (result) {
+      if (result) {
+        let tasks = result;
+        resolve(tasks);
+        return;
+      }
+      else {
+        reject();
+        return;
+      }
+    }).catch(function (err) {
+      reject(err);
+      return;
+    })
+  })
+}
+
+function getAllSubTasks(userId) {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let result = await global.databaseConnection.models.subTasks.findAll({
+        include: [{
+          model:global.databaseConnection.models.tasks,
+          where: { userId },
+          attributes: []
+        }]
+      })
+      if (result) {
+        let tasks = result;
+        resolve(tasks);
+        return;
+      }
+      else {
+        reject();
+        return;
+      }
+    } catch (error) {
+      reject(error);
+      return;
+    }
+  })
+}
+
+function getAllSubTasksForTask(taskId) {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let result = await global.databaseConnection.models.subTasks.findAll({
+        where: { taskId }
+      })
+      if (result) {
+        let tasks = result;
+        resolve(tasks);
+        return;
+      }
+      else {
+        reject();
+        return;
+      }
+    } catch (error) {
+      reject(error);
+      return;
+    }
+  })
+}
+
+
 function createSubTask(taskId, status) {
   return new Promise(function (resolve, reject) {
     global.databaseConnection.models.subTasks.create({ taskId, status }).then(function (result) {
@@ -314,7 +431,7 @@ function updateTask(id, status, dueDate) {
 
 function deleteTask(id) {
   return new Promise(function (resolve, reject) {
-    global.databaseConnection.models.tasks.destroy({ where: { id: id } , individualHooks:true})
+    global.databaseConnection.models.tasks.destroy({ where: { id: id }, individualHooks: true })
       .then(function (result) {
         if (result) {
           let task = result[0];
