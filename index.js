@@ -25,9 +25,9 @@ function authenticateToken(req, res, next) {
 }
 
 /*Routes Start*/
-app.get('/task', authenticateToken, async (req, res) => {
+app.get('/task/', authenticateToken, async (req, res) => {
   try {
-    const tasks = await getAllTasks(req.user);
+    const tasks = await getAllTasks(req.user, req.query);
     if (tasks?.length) {
       console.log("tasks fetched"); // Log the created task
       res.status(200).json({ tasks });
@@ -312,10 +312,21 @@ function createTask(currentUser, title, description, status, priority, dueDate) 
   })
 }
 
-function getAllTasks(currentUser) {
+function getAllTasks(currentUser, params) {
   return new Promise(function (resolve, reject) {
+    let whereCondition ={
+      userId: currentUser
+    }
+    if(Object.keys(params).length){
+      for(key of Object.keys(params)){
+        whereCondition[key]= params[key]
+      }
+    }
+    if(params.style){
+      style= params.style;
+    }
     global.databaseConnection.models.tasks.findAll({
-      where: { userId: currentUser }
+      where: whereCondition 
     }).then(function (result) {
       if (result) {
         let tasks = result;
