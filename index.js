@@ -446,7 +446,7 @@ function deleteTask(id) {
     global.databaseConnection.models.tasks.destroy({ where: { id: id }, individualHooks: true })
       .then(function (result) {
         if (result) {
-          let task = result[0];
+          let task = result;
           resolve(task);
           return;
         }
