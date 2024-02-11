@@ -29,14 +29,14 @@ app.get('/task/', authenticateToken, async (req, res) => {
   try {
     const tasks = await getAllTasks(req.user, req.query);
     if (tasks?.length) {
-      console.log("tasks fetched"); // Log the created task
+      console.log("tasks fetched");
       res.status(200).json({ tasks });
     } else {
-      console.log("No tasks Found for current user"); // Log if task creation failed
+      console.log("No tasks Found for current user");
       res.status(400).json({ error: "No tasks Found for current user" });
     }
   } catch (error) {
-    console.error("Error creating task:", error); // Log any errors
+    console.error("Error fetching tasks:", error); // Log any errors
     res.status(500).json({ error: error.message });
   }
 });
@@ -45,14 +45,14 @@ app.get('/sub-task', authenticateToken, async (req, res) => {
   try {
     let subTasks = await getAllSubTasks(req.user);
     if (subTasks?.length) {
-      console.log("subTasks fetched"); // Log the created task
+      console.log("subTasks fetched"); 
       res.status(200).json({ subTasks });
     } else {
-      console.log("No subTasks Found for current task"); // Log if task creation failed
+      console.log("No subTasks Found for current task"); 
       res.status(400).json({ error: "No subTasks Found for current task" });
     }
   } catch (error) {
-    console.error("Error creating task:", error); // Log any errors
+    console.error("Error fetching tasks:", error); // Log any errors
     res.status(500).json({ error: error.message });
   }
 });
@@ -61,14 +61,14 @@ app.get('/sub-task/:id', authenticateToken, async (req, res) => {
   try {
     let subTasks = await getAllSubTasksForTask(req.params?.id);
     if (subTasks?.length) {
-      console.log("subTasks fetched"); // Log the created task
+      console.log("subTasks fetched");
       res.status(200).json({ subTasks });
     } else {
-      console.log("No subTasks Found for current task"); // Log if task creation failed
+      console.log("No subTasks Found for current task");
       res.status(400).json({ error: "No subTasks Found for current task" });
     }
   } catch (error) {
-    console.error("Error creating task:", error); // Log any errors
+    console.error("Error creating task:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -351,7 +351,8 @@ function getAllSubTasks(userId) {
         include: [{
           model:global.databaseConnection.models.tasks,
           where: { userId },
-          attributes: []
+          attributes: [],
+          required: true
         }]
       })
       if (result) {

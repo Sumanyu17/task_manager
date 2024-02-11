@@ -14,7 +14,6 @@ global.databaseConnection = new Sequelize(config.databaseName, config.dbuser, co
 let models = require('./model-collection');
 global.databaseConnection.Models = models;
 (async () => {
-  await global.databaseConnection.sync();
-  // Code here
+  await global.databaseConnection.sync({force: true});
 })();
 
