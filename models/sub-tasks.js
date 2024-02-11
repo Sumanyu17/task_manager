@@ -23,7 +23,10 @@ const SubTasks = global.databaseConnection.define("subTasks", {
 },
   {
     paranoid: true,
-    hooks: { afterUpdate: checkTaskStatus }
+    hooks: { 
+      afterCreate: checkTaskStatus,
+      afterUpdate: checkTaskStatus,
+      afterDestroy:checkTaskStatus }
   }
 );
 
